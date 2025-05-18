@@ -8,7 +8,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy application code explicitly
 COPY manage.py /app/manage.py
-COPY my_django_app /app/my_django_app
+COPY system /app/system
 
 # Expose port and run the application
 EXPOSE 8000
