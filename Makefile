@@ -9,7 +9,7 @@ REDIS = redis
 # ========================
 #     Docker Commands
 # ========================
-.PHONY: help build up down restart logs backend-logs frontend-logs db-logs redis-logs
+.PHONY: help build up down restart logs backend-logs frontend-logs db-logs redis-logs backend-sh frontend-sh db-sh redis-sh migrate makemigrations shell
 
 help:
 	@echo "Available commands:"
@@ -28,10 +28,16 @@ help:
 	@echo "  make redis-logs       Display logs for the Redis service"
 	@echo ""
 	@echo "Django Management:"
-	@echo "  make migrate          Apply database migrations"
-	@echo "  make createsuperuser  Create a Django superuser"
-	@echo "  make shell            Open a Django shell inside the backend container"
-	@echo "  make collectstatic    Collect static files"
+	@echo "  make migrate app=videos          Apply database migrations for a specific app"
+	@echo "  make makemigrations app=videos   Generate migrations for a specific app"
+	@echo "  make shell                       Open a Django shell inside the backend container"
+	@echo "  make collectstatic               Collect static files"
+	@echo ""
+	@echo "Container Shell Access:"
+	@echo "  make backend-sh                  Open a shell inside the backend container"
+	@echo "  make frontend-sh                 Open a shell inside the frontend container"
+	@echo "  make db-sh                       Open a shell inside the database container"
+	@echo "  make redis-sh                    Open a shell inside the Redis container"
 
 # Docker Management
 build:
@@ -68,7 +74,10 @@ redis-logs:
 #     Django Management
 # ========================
 migrate:
-	docker-compose exec $(BACKEND) python manage.py migrate
+	docker-compose exec $(BACKEND) python manage.py migrate $(app)
+
+makemigrations:
+	docker-compose exec $(BACKEND) python manage.py makemigrations $(app)
 
 createsuperuser:
 	docker-compose exec $(BACKEND) python manage.py createsuperuser
@@ -78,3 +87,18 @@ shell:
 
 collectstatic:
 	docker-compose exec $(BACKEND) python manage.py collectstatic --noinput
+
+# ========================
+#    Container Shell Access
+# ========================
+backend-sh:
+	docker-compose exec $(BACKEND) /bin/bash
+
+frontend-sh:
+	docker-compose exec $(FRONTEND) /bin/sh
+
+db-sh:
+	docker-compose exec $(DB) psql -U user -d youtube
+
+redis-sh:
+	docker-compose exec $(REDIS) redis-cli

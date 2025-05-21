@@ -1,5 +1,5 @@
 """
-ASGI config for my_django_app project.
+ASGI config for streamline backend system project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
