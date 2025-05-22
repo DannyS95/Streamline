@@ -92,13 +92,13 @@ collectstatic:
 #    Container Shell Access
 # ========================
 backend-sh:
-	docker-compose exec $(BACKEND) /bin/bash
+	docker-compose exec $(BACKEND) $(if $(arg),$(arg),/bin/bash)
 
 frontend-sh:
 	docker-compose exec $(FRONTEND) /bin/sh
 
 db-sh:
-	docker-compose exec $(DB) psql -U user -d youtube
+	docker-compose exec backend psql -h db -U user -d youtube
 
 redis-sh:
 	docker-compose exec $(REDIS) redis-cli
